@@ -221,6 +221,7 @@ class Environment(object):
         return abs(b[0] - a[0]) + abs(b[1] - a[1])
 
 
+
 class Agent(object):
     """Base class for all agents."""
 

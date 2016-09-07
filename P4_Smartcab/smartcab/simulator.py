@@ -83,6 +83,10 @@ class Simulator(object):
                                     self.quit = True
                                 elif event.unicode == u' ':
                                     self.paused = True
+                                elif event.unicode == u'+':
+                                    self.update_delay = min(max(self.update_delay * 3.0, 0.01), 1.0)
+                                elif event.unicode == u'-':
+                                    self.update_delay = min(max(self.update_delay / 3.0, 0.01), 1.0)
 
                         if self.paused:
                             self.pause()

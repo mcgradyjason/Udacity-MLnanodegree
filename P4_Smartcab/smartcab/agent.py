@@ -1,4 +1,5 @@
 import random
+import pandas as pd
 from environment import Agent, Environment
 from planner import RoutePlanner
 from simulator import Simulator
@@ -11,11 +12,17 @@ class LearningAgent(Agent):
         self.color = 'red'  # override color
         self.planner = RoutePlanner(self.env, self)  # simple route planner to get next_waypoint
         # TODO: Initialize any additional variables here
+        self.alpha = 0.2
+        self.Qtable = {}
+        
 
     def reset(self, destination=None):
         self.planner.route_to(destination)
         # TODO: Prepare for a new trip; reset any variables here, if required
-
+        self.state = None
+        self.reward = 0
+        
+        
     def update(self, t):
         # Gather inputs
         self.next_waypoint = self.planner.next_waypoint()  # from route planner, also displayed by simulator
@@ -23,15 +30,39 @@ class LearningAgent(Agent):
         deadline = self.env.get_deadline(self)
 
         # TODO: Update state
+
+        # Inform Driving Agent
+        self.state = (inputs['light'], inputs['oncoming'], 
+                      inputs['left'], inputs['right'], self.next_waypoint)
+        
         
         # TODO: Select action according to your policy
-        action = None
-
+        valid_actions = [None, 'forward', 'left', 'right']
+        
+        # Random Pick Actions
+        ### action = random.choice(valid_actions)
+        
+        # Get all Q values for all state
+        all_actions = {action: self.Qtable.get((self.state, action), 0)
+                        for action in valid_actions}
+                           
+        # Find action that maximizes Q values
+        best_actions = [action for action in valid_actions 
+                        if all_actions[action] == max(all_actions.values())]
+           
+        # Return Best Action
+        action = random.choice(best_actions)    
+         
         # Execute action and get reward
         reward = self.env.act(self, action)
 
         # TODO: Learn policy based on state, action, reward
 
+        # To simplify the problem, I set gamma equals 0.
+        self.Qtable[(self.state, action)] = \
+        (1 - self.alpha) * self.Qtable.get((self.state, action), 0) + self.alpha * reward
+     
+           
         print "LearningAgent.update(): deadline = {}, inputs = {}, action = {}, reward = {}".format(deadline, inputs, action, reward)  # [debug]
 
 
@@ -45,10 +76,10 @@ def run():
     # NOTE: You can set enforce_deadline=False while debugging to allow longer trials
 
     # Now simulate it
-    sim = Simulator(e, update_delay=0.5, display=True)  # create simulator (uses pygame when display=True, if available)
+    sim = Simulator(e, update_delay=0, display=False)  # create simulator (uses pygame when display=True, if available)
     # NOTE: To speed up simulation, reduce update_delay and/or set display=False
 
-    sim.run(n_trials=100)  # run for a specified number of trials
+    sim.run(n_trials=50000)  # run for a specified number of trials
     # NOTE: To quit midway, press Esc or close pygame window, or hit Ctrl+C on the command-line
 
 
