@@ -20,12 +20,11 @@ I have installed [Anaconda](https://www.continuum.io/downloads), but *seaborn* a
 
 ### Run
 
-In a terminal or command window, navigate to the top-level project directory `P5_Allstate Claim Loss Prediction/` (that contains this README) and run one of the following commands:
-
-```allstate.py```  
+In a terminal or command window, navigate to the top-level project directory `P5_Allstate Claim Loss Prediction/` (that contains this README) and run one of the following codes called ```allstate.py``` 
 
 
-## Data
+
+### Data
 
 The dataset used in this project is not included but can be obtained from Kaggle.
 They can be downloaded through this [link](https://www.kaggle.com/c/allstate-claims-severity/data)
